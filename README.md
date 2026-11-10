@@ -47,7 +47,7 @@ For the recommended container workflow, install Docker Desktop with Docker Compo
 
 ## Quick start (Docker)
 
-After the scaffold and compose files are in place:
+From the cloned project directory:
 
 ```sh
 git clone <repository-url>
@@ -55,17 +55,17 @@ cd internship-application-tracker
 cp .env.example .env
 ```
 
-Set a unique `DJANGO_SECRET_KEY` and a local-only `POSTGRES_PASSWORD` in `.env`, then start the services:
+Set a unique `DJANGO_SECRET_KEY` and a local-only `POSTGRES_PASSWORD` in `.env`, then start the services and initialize demo data:
 
 ```sh
-docker compose up --build -d
-docker compose exec web python manage.py migrate
-docker compose exec web python manage.py seed_demo
+make up
+make migrate
+make seed
 ```
 
 Open <http://localhost:8000>. Stop the stack with `docker compose down`; add `-v` only when you intentionally want to remove local database and media volumes.
 
-The build plan's intended Make targets, once provided, are `make up`, `make migrate`, `make seed`, `make test`, `make lint`, `make perf`, and `make logs`. The direct Compose commands above describe the underlying workflow. Demo accounts and their shared demo password will be documented here when the seed command is implemented; seed credentials are for local demonstrations only.
+The Makefile also provides `make down`, `make test`, `make lint`, `make perf`, and `make logs`. Demo accounts and their shared demo password will be documented here when the seed command is implemented; seed credentials are for local demonstrations only.
 
 ## Local development
 
