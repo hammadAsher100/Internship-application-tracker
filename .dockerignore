@@ -1,0 +1,11 @@
+**/*.py[cod]
+.git
+.venv
+venv
+.env
+media
+staticfiles
+__pycache__
+.pytest_cache
+.ruff_cache
+INTERNSHIP_TRACKER_BUILD_PLAN.md
