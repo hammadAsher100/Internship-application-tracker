@@ -10,13 +10,19 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "channels",
     "apps.core",
+    "apps.accounts",
+    "apps.students",
+    "apps.employers",
+    "apps.audit",
 ]
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -84,3 +90,15 @@ LOGIN_URL = "/login/"
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 X_FRAME_OPTIONS = "DENY"
+AUTH_USER_MODEL = "accounts.User"
+AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
+STUDENT_ID_REGEX = os.getenv("STUDENT_ID_REGEX", r"^\d{2}-\d{6}-\d{3}$")
+ALLOWED_STUDENT_EMAIL_DOMAIN = (
+    os.getenv("ALLOWED_STUDENT_EMAIL_DOMAIN", "").strip().lower()
+)
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "interntrack",
+    }
+}
