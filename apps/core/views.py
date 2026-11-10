@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
 from apps.accounts.models import User
 
@@ -10,7 +10,5 @@ def home(request):
             User.Role.EMPLOYER: "employer_pending",
             User.Role.OFFICER: "officer_dashboard",
         }
-        from django.shortcuts import redirect
-
         return redirect(destinations.get(request.user.role, "home"))
     return render(request, "home.html")

@@ -7,7 +7,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -16,11 +15,37 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='StudentProfile',
+            name="StudentProfile",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('student_id', models.CharField(max_length=20, unique=True, validators=[django.core.validators.RegexValidator(message='Enter a student ID in the format 02-131232-045.', regex='^\\d{2}-\\d{6}-\\d{3}$')])),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "student_id",
+                    models.CharField(
+                        max_length=20,
+                        unique=True,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="Enter a student ID in the format 02-131232-045.",
+                                regex="^\\d{2}-\\d{6}-\\d{3}$",
+                            )
+                        ],
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]

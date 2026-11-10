@@ -10,3 +10,5 @@ urlpatterns = [
 ]
 
 handler403 = "apps.accounts.views.forbidden"
+handler404 = "apps.accounts.views.not_found"
+handler500 = "apps.accounts.views.server_error"

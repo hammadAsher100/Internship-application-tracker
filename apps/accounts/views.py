@@ -3,9 +3,7 @@ import hashlib
 
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView, PasswordChangeView
-from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -47,6 +45,7 @@ def register_student(request):
     form = StudentRegistrationForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         user = form.save_user()
+        record_event(request, "register", actor=user, target=user)
         login(request, user, backend="django.contrib.auth.backends.ModelBackend")
         messages.success(
             request, "Complete your profile and upload a CV before applying."
@@ -63,10 +62,11 @@ def register_employer(request):
     form = EmployerRegistrationForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         user = form.save_user()
+        record_event(request, "register", actor=user, target=user)
         login(request, user, backend="django.contrib.auth.backends.ModelBackend")
         messages.success(
             request,
-            "Your employer account is registered. Complete company details next.",
+            "Your company registration is awaiting placement office approval.",
         )
         return redirect("employer_pending")
     return render(
@@ -140,10 +140,8 @@ class AccountPasswordChangeView(PasswordChangeView):
     success_url = reverse_lazy("password_change_done")
 
 
-@login_required
+@require_role(User.Role.STUDENT)
 def student_profile_placeholder(request):
-    if request.user.role != User.Role.STUDENT:
-        raise PermissionDenied
     return render(
         request, "accounts/phase_placeholder.html", {"title": "Complete your profile"}
     )
@@ -151,7 +149,11 @@ def student_profile_placeholder(request):
 
 @require_role(User.Role.EMPLOYER)
 def employer_pending(request):
-    return render(request, "accounts/employer_pending.html")
+    return render(
+        request,
+        "accounts/employer_pending.html",
+        {"company": getattr(request.user, "company", None)},
+    )
 
 
 @require_role(User.Role.STUDENT)
@@ -185,3 +187,11 @@ def registration_options(request):
 
 def forbidden(request, exception=None):
     return render(request, "errors/403.html", status=403)
+
+
+def not_found(request, exception=None):
+    return render(request, "errors/404.html", status=404)
+
+
+def server_error(request):
+    return render(request, "errors/500.html", status=500)

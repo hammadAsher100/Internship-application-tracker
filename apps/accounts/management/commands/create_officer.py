@@ -1,6 +1,7 @@
 from getpass import getpass
 
 from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand, CommandError
 
 from apps.accounts.models import User
@@ -23,7 +24,7 @@ class Command(BaseCommand):
             raise CommandError("The passwords do not match.")
         try:
             validate_password(password)
-        except Exception as exc:
+        except ValidationError as exc:
             raise CommandError(str(exc)) from exc
         User.objects.create_user(
             email=email,

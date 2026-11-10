@@ -10,7 +10,7 @@ class StudentProfile(models.Model):
         unique=True,
         validators=[
             RegexValidator(
-                regex=r"^\d{2}-\d{6}-\d{3}$",
+                regex=settings.STUDENT_ID_REGEX,
                 message="Enter a student ID in the format 02-131232-045.",
             )
         ],

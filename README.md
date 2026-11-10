@@ -4,6 +4,8 @@ InternTrack is a university internship application tracker for students, employe
 
 The project is being built in phases for SEN-311 Software Construction, Bahria University Karachi (Fall 2026). This README will be kept aligned with the implementation as each phase lands.
 
+Current progress: Phase 0 is committed. Phase 1 provides email-based accounts, student and employer registration, company approval status, officer account creation, role checks, and login lockout. Student profiles, postings, and the remaining workflow are being added in later phases.
+
 ## Features in scope
 
 - Role-based accounts for students, employers, and placement officers.
@@ -55,17 +57,16 @@ cd internship-application-tracker
 cp .env.example .env
 ```
 
-Set a unique `DJANGO_SECRET_KEY` and a local-only `POSTGRES_PASSWORD` in `.env`, then start the services and initialize demo data:
+Set a unique `DJANGO_SECRET_KEY` and a local-only `POSTGRES_PASSWORD` in `.env`, then start the services:
 
 ```sh
 make up
 make migrate
-make seed
 ```
 
-Open <http://localhost:8000>. Stop the stack with `docker compose down`; add `-v` only when you intentionally want to remove local database and media volumes.
+Open <http://localhost:8000>. Demo data seeding is planned but not implemented yet. Stop the stack with `make down`; add `-v` to `docker compose down` only when you intentionally want to remove local database and media volumes.
 
-The Makefile also provides `make down`, `make test`, `make lint`, `make perf`, and `make logs`. Demo accounts and their shared demo password will be documented here when the seed command is implemented; seed credentials are for local demonstrations only.
+The Makefile also provides `make down`, `make test`, `make lint`, and `make logs`. Officer accounts can be created with `python manage.py create_officer --email officer@example.edu --full-name "Placement Officer"`; the command prompts for a password. Demo seeding and performance checks will be added in later phases.
 
 ## Local development
 

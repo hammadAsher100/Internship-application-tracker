@@ -9,6 +9,7 @@ from django.test import RequestFactory, SimpleTestCase, TestCase, override_setti
 
 from apps.audit.models import AuditLog
 from apps.accounts.models import User
+from apps.employers.models import Company
 from apps.accounts.permissions import require_role
 from apps.accounts.services import (
     clear_login_failures,
@@ -93,6 +94,23 @@ class RolePermissionTests(SimpleTestCase):
 
 
 class AccountFlowTests(TestCase):
+    def test_inactive_account_cannot_log_in(self):
+        User.objects.create_user(
+            email="disabled@example.edu",
+            password="InternTrack#2026",
+            full_name="Disabled Member",
+            role=User.Role.STUDENT,
+            is_active=False,
+        )
+        response = self.client.post(
+            "/login/",
+            {"email": "disabled@example.edu", "password": "InternTrack#2026"},
+        )
+        self.assertContains(
+            response, "This account is disabled. Contact the placement office."
+        )
+        self.assertNotIn("_auth_user_id", self.client.session)
+
     def test_student_registration_creates_account_and_student_id(self):
         response = self.client.post(
             "/register/student/",
@@ -111,6 +129,29 @@ class AccountFlowTests(TestCase):
         self.assertEqual(user.role, User.Role.STUDENT)
         self.assertTrue(user.check_password("InternTrack#2026"))
         self.assertEqual(user.studentprofile.student_id, "02-131232-045")
+
+    def test_employer_registration_creates_pending_company(self):
+        response = self.client.post(
+            "/register/employer/",
+            {
+                "full_name": "Sara Ali",
+                "email": "hr@techcorp.example",
+                "password1": "InternTrack#2026",
+                "password2": "InternTrack#2026",
+                "company_name": "TechCorp",
+                "industry": "Software",
+                "website": "https://techcorp.example",
+                "location": "Karachi",
+                "contact_phone": "+922112345678",
+                "description": "A software company hiring interns.",
+            },
+        )
+        self.assertRedirects(
+            response, "/employer/pending/", fetch_redirect_response=False
+        )
+        company = Company.objects.get(name="TechCorp")
+        self.assertEqual(company.approval_status, Company.ApprovalStatus.PENDING)
+        self.assertEqual(company.owner.role, User.Role.EMPLOYER)
 
     def test_login_is_throttled_after_five_bad_passwords(self):
         User.objects.create_user(

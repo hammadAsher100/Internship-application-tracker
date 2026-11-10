@@ -87,7 +87,7 @@ class EmployerRegistrationForm(RegistrationForm):
     role = User.Role.EMPLOYER
     company_name = forms.CharField(max_length=180, label="Company name")
     industry = forms.CharField(max_length=100)
-    website = forms.URLField(required=False)
+    website = forms.URLField(required=False, assume_scheme="https")
     location = forms.CharField(max_length=160)
     contact_phone = forms.CharField(max_length=20, label="Company phone")
     description = forms.CharField(

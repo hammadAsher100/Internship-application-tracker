@@ -10,6 +10,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends netcat-openbsd && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /install /usr/local
 COPY . .
+RUN pip install --no-cache-dir -r requirements/dev.txt
 RUN python manage.py collectstatic --noinput
 RUN addgroup --system app && adduser --system --ingroup app app && mkdir -p /app/media /app/staticfiles && chown -R app:app /app
 USER app
